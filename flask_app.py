@@ -13,6 +13,7 @@ test = ""
 
 def save_uploaded_file(file):
     if file:
+
         filename = secure_filename(file.filename)
         file_path = filename
         file.save(file_path)
@@ -79,7 +80,7 @@ def filter_data():
                 if des2 and des2 not in row_data[9]:
                     continue
 
-                # 그룹 필터링 
+                # 그룹 필터링
                 if des3:
                     if des3 == "영남" and "영남" not in row_data[3]:
                         continue
@@ -97,31 +98,46 @@ def filter_data():
                     continue
                 # 데이터 추가
                 data_list.append(row_data)
-            
 
-            # 결과 출력
-            df = pd.DataFrame(data_list)
-            df = df.iloc[:, 2:] 
-            df = df[df.iloc[:, 0] != '이름']
-            df.iloc[:, 5] = df.iloc[:, 5].apply(lambda x: re.sub(r'^(.*?)-(.*)$', r'(\1)\2', x))
+            if data_list:
+                # 결과 출력
+                df = pd.DataFrame(data_list)
+                df = df.iloc[:, 2:]
+                df = df[df.iloc[:, 0] != '이름']
+                df.iloc[:, 5] = df.iloc[:, 5].apply(lambda x: re.sub(r'^(.*?)-(.*)$', r'(\1)\2', x))
+                df.iloc[:, 1] = df.iloc[:, 1].apply(lambda x: x.replace('=', '') if '=' in x else x)
 
-            
-            new_row = ["고객명", "아파트명", "계약조건", "시공일", "비고", "시공자", "연락처","추가사항",
-                    "비고","주소","동/호수","입력시간","기타사항"]
-            df.loc[-1] = new_row
-            df.index = df.index + 1 
-            df = df.sort_index()
+                if not df.empty:
+                    new_row = ["고객명", "아파트명", "계약조건", "시공일", "비고", "시공자", "연락처", "시간",
+                            "비고", "주소", "동/호수", "입력시간", "기타사항"]
+                    df.loc[-1] = new_row
+                    df.index = df.index + 1
+                    df = df.sort_index()
+                else:
+                    # 데이터가 없는 경우 빈 DataFrame 생성
+                    df = pd.DataFrame(columns=["고객명", "아파트명", "계약조건", "시공일", "비고", "시공자", "연락처", "시간",
+                                            "비고", "주소", "동/호수", "입력시간", "기타사항"])
 
-            FileName = test.replace("uploads\\", '')
+                FileName = test.replace("uploads\\", '')
+                
 
-            return render_template("index.html", df=df, FileName=FileName)
+                return render_template("index.html", df=df, FileName=FileName,test=test,filter_conditions={
+        "date1": des1, "date2": des6,
+        "time": des2, "group": des3,
+        "installer": des4, "str": des5,
+        "apart": des7
+    })
+            else:
+                alert_message = "조건에 맞는 데이터가 없습니다"  # 알림 메시지 설정
+                return render_template("index.html", df=None, alert_message=alert_message)
+
     else:
         if test:
             data = open(test, "rb").read()  # 파일 내용 읽음
             workbook = xlrd.open_workbook(file_contents=data)
             workbook = xlrd.open_workbook(file_contents=data)
             worksheet = workbook.sheet_by_index(0)
-        
+
                     # 입력 필터 조건 받기
             des1 = request.form.get("date1")
             des6 = request.form.get("date2")
@@ -158,7 +174,7 @@ def filter_data():
                 if des2 and des2 not in row_data[9]:
                     continue
 
-                # 그룹 필터링 
+                # 그룹 필터링
                 if des3:
                     if des3 == "영남" and "영남" not in row_data[3]:
                         continue
@@ -176,23 +192,42 @@ def filter_data():
                     continue
                 # 데이터 추가
                 data_list.append(row_data)
-            
-
-            # 결과 출력
-            df = pd.DataFrame(data_list)
-            df = df.iloc[:, 2:] 
-            df = df[df.iloc[:, 0] != '이름']
-            df.iloc[:, 5] = df.iloc[:, 5].apply(lambda x: re.sub(r'^(.*?)-(.*)$', r'(\1)\2', x))
 
             
-            new_row = ["고객명", "아파트명", "계약조건", "시공일", "비고", "시공자", "연락처","추가사항",
-                    "비고","주소","동/호수","입력시간","기타사항"]
-            df.loc[-1] = new_row
-            df.index = df.index + 1 
-            df = df.sort_index()
-            FileName = test.replace("uploads\\", '')
+            if data_list:
+                # 결과 출력
+                df = pd.DataFrame(data_list)
+                df = df.iloc[:, 2:]
+                df = df[df.iloc[:, 0] != '이름']
+                df.iloc[:, 5] = df.iloc[:, 5].apply(lambda x: re.sub(r'^(.*?)-(.*)$', r'(\1)\2', x))
+                df.iloc[:, 1] = df.iloc[:, 1].apply(lambda x: x.replace('=', '') if '=' in x else x)
 
-            return render_template("index.html", df=df, FileName=FileName)
+                if not df.empty:
+                    new_row = ["고객명", "아파트명", "계약조건", "시공일", "비고", "시공자", "연락처", "시간",
+                            "비고", "주소", "동/호수", "입력시간", "기타사항"]
+                    df.loc[-1] = new_row
+                    df.index = df.index + 1
+                    df = df.sort_index()
+                else:
+                    # 데이터가 없는 경우 빈 DataFrame 생성
+                    df = pd.DataFrame(columns=["고객명", "아파트명", "계약조건", "시공일", "비고", "시공자", "연락처", "시간",
+                                            "비고", "주소", "동/호수", "입력시간", "기타사항"])
+
+                FileName = test.replace("uploads\\", '')
+                
+
+                return render_template("index.html", df=df, FileName=FileName,test=test,filter_conditions={
+        "date1": des1, "date2": des6,
+        "time": des2, "group": des3,
+        "installer": des4, "str": des5,
+        "apart": des7
+    })
+            else:
+                alert_message = "조건에 맞는 데이터가 없습니다"  # 알림 메시지 설정
+                return render_template("index.html", df=None, alert_message=alert_message)
+        else:
+            alert_message = "파일을 입력해주세요"  # 알림 메시지 설정
+            return render_template("index.html", df=None, alert_message=alert_message)
 
 @app.route("/download_excel")
 def download_excel():
