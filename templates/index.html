@@ -282,12 +282,23 @@
                             <option value="입금확인">입금확인</option>
                             <option value="경인이관">경인이관</option>
                             <option value="사전예약">사전예약</option>
-
                         </select>
 
                         <label for="apart">그룹</label>
-                        <input type="text" id="apart" name="apart" />
-
+                        <select name="apart" id="apart">
+                            <option value="">전체</option>
+                            <option value="특별관리">특별관리</option>
+                            <option value="대구영남">대구영남</option>
+                            <option value="기타아파트">기타아파트</option>
+                            <option value="송도디에트르">송도디에트르</option>
+                            <option value="산성역자이프루지오">산성역자이프루지오</option>
+                            <option value="부평그랑힐스">부평그랑힐스</option>
+                            <option value="래미안원베일리">래미안원베일리</option>
+                            <option value="검단예미지더시그너스">검단예미지더시그너스</option>
+                            <option value="봉담자이라피네">봉담자이라피네</option>
+                            <option value="힐스테이트레이크송">힐스테이트레이크송</option>
+                            <option value="개포디에이치퍼스티">개포디에이치퍼스티</option>
+                        </select>
                         <label for="date1">기간</label>
                             <input type="date" id="date1" name="date1">
                         <label for="date2">~ </label>
@@ -301,6 +312,7 @@
                     <a href="/download_excel" class="download-button">
                         <input type="button" value="다운" class="buttons">
                     </a>
+                    <input type="button" value="초기화" onclick="resetForm()" class="buttons">
                 </div>
             </div>
 
@@ -462,6 +474,71 @@ document.addEventListener("DOMContentLoaded", function() {
     h1Element.textContent = `총 ${totalRows -1 } 개`;
 
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector(".forms");
+
+    // 페이지 로딩 시에 이전에 저장한 값을 불러와서 선택 상태를 설정
+    restoreFormState();
+
+    form.addEventListener("submit", function(event) {
+        // 현재의 선택 값을 로컬 스토리지에 저장
+        saveFormState();
+    });
+
+    function saveFormState() {
+        // input 요소에 대한 저장 로직
+        const inputs = form.querySelectorAll("input[type='text'], input[type='date']");
+        inputs.forEach(input => {
+            localStorage.setItem(input.id, input.value);
+        });
+
+        // select 요소에 대한 저장 로직 추가
+        const selects = form.querySelectorAll("select");
+        selects.forEach(select => {
+            localStorage.setItem(select.id, select.value);
+        });
+    }
+
+    function restoreFormState() {
+        // input 요소에 대한 불러오기 로직
+        const inputs = form.querySelectorAll("input[type='text'], input[type='date']");
+        inputs.forEach(input => {
+            const savedValue = localStorage.getItem(input.id);
+            if (savedValue) {
+                input.value = savedValue;
+            }
+        });
+
+        // select 요소에 대한 불러오기 로직 추가
+        const selects = form.querySelectorAll("select");
+        selects.forEach(select => {
+            const savedValue = localStorage.getItem(select.id);
+            if (savedValue) {
+                select.value = savedValue;
+            }
+        });
+    }
+});
+
+function resetForm() {
+    const form = document.querySelector(".forms");
+
+    // input 요소에 대한 초기화 로직
+    const inputs = form.querySelectorAll("input[type='text'], input[type='date']");
+    inputs.forEach(input => {
+        input.value = "";
+        localStorage.removeItem(input.id);
+    });
+
+    // select 요소에 대한 초기화 로직
+    const selects = form.querySelectorAll("select");
+    selects.forEach(select => {
+        select.value = "";
+        localStorage.removeItem(select.id);
+    });
+}
+
     </script>
 
 
