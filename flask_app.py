@@ -20,6 +20,36 @@ def save_uploaded_file(file):
         return file_path
     return None
 
+# def extract_unique_prefix(data_list, column_index):
+#     prefixes = set()
+#     for row_data in data_list:
+#         value = row_data[column_index]
+#         if "-" in value:
+#             prefix = value.split("-")[0]
+#             prefixes.add(prefix)
+#     sorted_prefixes = sorted(prefixes)
+#     return sorted_prefixes
+
+def extract_unique_prefix_once(worksheet, column_index):
+    prefixes = set()
+    for row in range(worksheet.nrows):
+        row_data = worksheet.row_values(row)
+        value = row_data[column_index]
+        if "-" in value:
+            prefix = value.split("-")[0]
+            prefixes.add(prefix)
+    sorted_prefixes = sorted(prefixes)
+    return sorted_prefixes
+def extract_unique_prefix_two(worksheet, column_index):
+    prefixes = set()
+    for row in range(worksheet.nrows):
+        row_data = worksheet.row_values(row)
+        value = row_data[column_index]
+        if "-" in value:
+            prefix = value.split("-")[1]
+            prefixes.add(prefix)
+    sorted_prefixes = sorted(prefixes)
+    return sorted_prefixes
 @app.route("/")
 def index():
     global df
@@ -57,7 +87,15 @@ def filter_data():
 
             for row in range(worksheet.nrows):
                 row_data = worksheet.row_values(row)
+                available_str_options = extract_unique_prefix_once(worksheet, 7)
+                available_str_options2 = extract_unique_prefix_two(worksheet, 7)
 
+                str_options_html = "\n".join(
+                    f'<option value="{option}">{option}</option>' for option in available_str_options
+                )
+                str_options_html2 = "\n".join(
+                    f'<option value="{option}">{option}</option>' for option in available_str_options2
+                )
                 # 날짜 필터링
                 date_value = row_data[5]
                 if des1 and des6:
@@ -82,10 +120,13 @@ def filter_data():
 
                 # 그룹 필터링
                 if des3:
-                    if des3 == "영남" and "영남" not in row_data[3]:
+                    if des3 == "영남" and "★" not in row_data[3]:
                         continue
-                    elif des3 == "서울" and "영남" in row_data[3]:
+                    elif des3 == "서울" and ("★" in row_data[3] or "■" in row_data[3]):
                         continue
+                    elif des3 == "특별관리" and ("★" in row_data[3] or "☆" in row_data[3]):
+                        continue
+
 
                 # 시공자 필터링
                 if des4 and des4 not in row_data[7]:
@@ -104,7 +145,6 @@ def filter_data():
                 df = pd.DataFrame(data_list)
                 df = df.iloc[:, 2:]
                 df = df[df.iloc[:, 0] != '이름']
-                df.iloc[:, 5] = df.iloc[:, 5].apply(lambda x: re.sub(r'^(.*?)-(.*)$', r'(\1)\2', x))
                 df.iloc[:, 1] = df.iloc[:, 1].apply(lambda x: x.replace('=', '') if '=' in x else x)
 
                 if not df.empty:
@@ -119,14 +159,14 @@ def filter_data():
                                             "비고", "주소", "동/호수", "입력시간", "기타사항"])
 
                 FileName = test.replace("uploads\\", '')
-                
 
-                return render_template("index.html", df=df, FileName=FileName,test=test,filter_conditions={
-        "date1": des1, "date2": des6,
-        "time": des2, "group": des3,
-        "installer": des4, "str": des5,
-        "apart": des7
-    })
+
+                return render_template("index.html", df=df, FileName=FileName, test=test, filter_conditions={
+                    "date1": des1, "date2": des6,
+                    "time": des2, "group": des3,
+                    "installer": des4, "str": des5,
+                    "apart": des7
+                }, str_options_html=str_options_html, str_options_html2=str_options_html2)
             else:
                 alert_message = "조건에 맞는 데이터가 없습니다"  # 알림 메시지 설정
                 return render_template("index.html", df=None, alert_message=alert_message)
@@ -134,7 +174,6 @@ def filter_data():
     else:
         if test:
             data = open(test, "rb").read()  # 파일 내용 읽음
-            workbook = xlrd.open_workbook(file_contents=data)
             workbook = xlrd.open_workbook(file_contents=data)
             worksheet = workbook.sheet_by_index(0)
 
@@ -148,10 +187,17 @@ def filter_data():
             des7 = request.form.get("apart")
             # 데이터 필터링을 위한 리스트
             data_list = []
-
             for row in range(worksheet.nrows):
                 row_data = worksheet.row_values(row)
+                available_str_options = extract_unique_prefix_once(worksheet, 7)
+                available_str_options2 = extract_unique_prefix_two(worksheet, 7)
 
+                str_options_html = "\n".join(
+                    f'<option value="{option}">{option}</option>' for option in available_str_options
+                )
+                str_options_html2 = "\n".join(
+                    f'<option value="{option}">{option}</option>' for option in available_str_options2
+                )
                 # 날짜 필터링
                 date_value = row_data[5]
                 if des1 and des6:
@@ -176,10 +222,13 @@ def filter_data():
 
                 # 그룹 필터링
                 if des3:
-                    if des3 == "영남" and "영남" not in row_data[3]:
+                    if des3 == "영남" and "★" not in row_data[3]:
                         continue
-                    elif des3 == "서울" and "영남" in row_data[3]:
+                    elif des3 == "서울" and ("★" in row_data[3] or "■" in row_data[3]):
                         continue
+                    elif des3 == "특별관리" and ("★" in row_data[3] or "☆" in row_data[3]):
+                        continue
+
 
                 # 시공자 필터링
                 if des4 and des4 not in row_data[7]:
@@ -187,6 +236,7 @@ def filter_data():
                 # 상태 필터링
                 if des5 and des5 not in row_data[7]:
                     continue
+
                 # 그룹 필터링
                 if des7 and des7 not in row_data[3]:
                     continue
@@ -199,7 +249,6 @@ def filter_data():
                 df = pd.DataFrame(data_list)
                 df = df.iloc[:, 2:]
                 df = df[df.iloc[:, 0] != '이름']
-                df.iloc[:, 5] = df.iloc[:, 5].apply(lambda x: re.sub(r'^(.*?)-(.*)$', r'(\1)\2', x))
                 df.iloc[:, 1] = df.iloc[:, 1].apply(lambda x: x.replace('=', '') if '=' in x else x)
 
                 if not df.empty:
@@ -214,14 +263,15 @@ def filter_data():
                                             "비고", "주소", "동/호수", "입력시간", "기타사항"])
 
                 FileName = test.replace("uploads\\", '')
-                
+                print("str_options:", available_str_options)
+                print("str_options2:", available_str_options2)
 
-                return render_template("index.html", df=df, FileName=FileName,test=test,filter_conditions={
-        "date1": des1, "date2": des6,
-        "time": des2, "group": des3,
-        "installer": des4, "str": des5,
-        "apart": des7
-    })
+                return render_template("index.html", df=df, FileName=FileName, test=test, filter_conditions={
+                    "date1": des1, "date2": des6,
+                    "time": des2, "group": des3,
+                    "installer": des4, "str": des5,
+                    "apart": des7
+                }, str_options_html=str_options_html, str_options_html2=str_options_html2)
             else:
                 alert_message = "조건에 맞는 데이터가 없습니다"  # 알림 메시지 설정
                 return render_template("index.html", df=None, alert_message=alert_message)
