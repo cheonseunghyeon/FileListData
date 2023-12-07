@@ -97,7 +97,6 @@
         background-color: #999999;
         cursor: pointer;
         height: 30px;
-        margin: 0px;
         margin-left: 10px;
         border-radius: 2px;
         transition: background-color 0.3s;
@@ -153,9 +152,6 @@
     input[type="submit"]:hover {
         background-color: #333333;
     }
-    .grouplist{
-        width: 150px;
-    }
     .centers{
         display: flex;
         flex-direction: row;
@@ -172,8 +168,8 @@
     .firstcontainer{
         display: flex;
         flex-direction: row;
-        gap: 0.5rem;
-        padding: 20px 10px;
+        gap: 1rem;
+        padding: 5px 20px;
         border-radius: 5px;
         display: flex;
         flex-direction: row;
@@ -181,6 +177,7 @@
     .headcon{
         display: flex;
         flex-direction: row;
+        width: 300px;
     }
     .buttons{
         width: 80px;
@@ -218,7 +215,7 @@
     }
     input[type="text"] {
         height: 25px;
-        width: 125px;
+        width: 200px;
     }
     .subtext{
         display: flex;
@@ -232,11 +229,14 @@
         color: #002060;
     }
     .maintitle{
-        font-size: 25px; 
-        font-weight: 700; 
+        font-size: 25px;
+        font-weight: 700;
         padding: 20px;
     }
-    @media only screen and (max-width: 1915px) {
+    .grouplist{
+        width: 130px;
+    }
+    @media only screen and (max-width: 1750px) {
     .header {
         gap: 1rem;
         border: solid 2px #678CCF;
@@ -259,10 +259,10 @@
         align-items: center;
     }
     .firstcontainer{
-        gap: 2rem;
+        gap: 5rem;
     }
     .grouplist{
-        width: 10px;
+        width: 130px;
     }
 }
 @media only screen and (max-width: 1450px) {
@@ -322,17 +322,13 @@
         margin: 0 auto;
     }
     .grouplist{
-        width: 150px;
-    }
-    input[type="text"] {
-        height: 20px;
-        width: 150px;
+        width: 130px;
     }
 }
     </style>
 </head>
 <body>
-    <span class="maintitle">공기수비대 고객관리2</span>
+    <span class="maintitle">공기수비대 고객관리</span>
     <div class="header">
         <form action="/" method="POST" enctype="multipart/form-data" class="forms">
 
@@ -353,9 +349,9 @@
                         <div class="cencenter2">
                             <label for="str">상태</label>
                             <select name="str" id="str">
-                                <option value="" selected>전체</option>
-                                {{ str_options_html|safe }}
-                                {{ str_options_html3|safe }}
+                                <option value="">전체</option>
+                                <option value="예약">예약</option>
+                                <option value="완료">완료</option>
                             </select>
 
                             <label for="group">소속</label>
@@ -363,15 +359,31 @@
                                 <option value="">전체</option>
                                 <option value="영남">영남</option>
                                 <option value="서울">서울</option>
-                                <option value="특별관리">특별관리</option>
                             </select>
                             <label for="installer">시공자</label>
                             <select name="installer" id="installer">
                                 <option value="">전체</option>
-                                {{ str_options_html2|safe }}
+                                <option value="태훈">태훈</option>
+                                <option value="용균">용균</option>
+                                <option value="김경">김경</option>
+                                <option value="이인">이인</option>
+                                <option value="박찬">박찬</option>
+                                <option value="정병">정병</option>
+                                <option value="안심">안심</option>
+                                <option value="인효">인효</option>
+                                <option value="권병">권병</option>
+                                <option value="광주">광주</option>
+                                <option value="조근">조근</option>
+                                <option value="오수">오수</option>
+                                <option value="홍진">홍진</option>
+                                <option value="이천">이천</option>
+                                <option value="시흥">시흥</option>
+                                <option value="평택">평택</option>
+                                <option value="예약중">예약중</option>
+                                <option value="예약미정">예약미정</option>
                             </select>
                         </div>
-                        
+
                         <div class="cencenter3">
                             <div class="cencenter2">
                                 <label for="time">시간</label>
@@ -400,21 +412,16 @@
                                     <option value="힐스테이트레이크송">
                                     <option value="개포디에이치퍼스티">
                                 </datalist>
-                                
-                            </div>
 
+                            </div>
                             <div class="cencenter2">
                                 <label for="date1">기간</label>
                                 <input type="date" id="date1" name="date1">
                             <label for="date2">~ </label>
                                 <input type="date" id="date2" name="date2">
                             </div>
-                            <div class="cencenter2">
-                                <label for="search">검색</label>
-                                <input type="text" id="search" name="search" placeholder="이름, 전화번호"/>
-                            </div>
                         </div>
-    
+
                     </div>
 
                         </div>
@@ -425,7 +432,7 @@
                             </a>
                             <input type="button" value="초기화" onclick="resetForm()" class="buttons">
                         </div>
-                        
+
             </div>
 
 
