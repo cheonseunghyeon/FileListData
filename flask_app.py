@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 df = None  # DataFrame을 저장할 변수
 test = ""
-
+testlist = ["태훈","용균","김경","이인","박찬", "임효", "용준","정병","안심","인효","권병","광주","조근","오수","홍진","이천","시흥","평택"]
 def save_uploaded_file(file):
     if file:
 
@@ -93,6 +93,8 @@ def filter_data():
             des4 = request.form.get("installer")
             des5 = request.form.get("str")
             des7 = request.form.get("apart")
+            des8 = request.form.get("search")
+
             # 데이터 필터링을 위한 리스트
             data_list = []
 
@@ -147,15 +149,22 @@ def filter_data():
                 if des4 and des4 not in row_data[7]:
                     continue
                 # 상태 필터링
-                if des5 and des5 not in row_data[7]:
-                    if des5 in ["박찬", "임효", "용준"]:
-                        if not any(row_data[7].startswith(des5 + "-") for des5 in ["박찬", "임효", "용준"]):
-                            continue
-                    else:
+                if des5:
+                    if des5 in testlist and not any(row_data[7].startswith(des5 + "-") for des5 in testlist):
                         continue
+                    elif des5 not in row_data[7]:
+                        continue
+
                 # 그룹 필터링
                 if des7 and des7 not in row_data[3]:
                     continue
+
+                # 검색 필터링
+                if des8 and des8 not in row_data[2] and des8 not in row_data[8]:
+                    continue
+
+
+
                 # 데이터 추가
                 data_list.append(row_data)
 
@@ -204,6 +213,7 @@ def filter_data():
             des4 = request.form.get("installer")
             des5 = request.form.get("str")
             des7 = request.form.get("apart")
+            des8 = request.form.get("search")
             # 데이터 필터링을 위한 리스트
             data_list = []
             for row in range(worksheet.nrows):
@@ -258,7 +268,7 @@ def filter_data():
                     continue
                 # 상태 필터링
                 if des5:
-                    if des5 in ["박찬", "임효", "용준"] and not any(row_data[7].startswith(des5 + "-") for des5 in ["박찬", "임효", "용준"]):
+                    if des5 in testlist and not any(row_data[7].startswith(des5 + "-") for des5 in testlist):
                         continue
                     elif des5 not in row_data[7]:
                         continue
@@ -267,6 +277,13 @@ def filter_data():
                 # 그룹 필터링
                 if des7 and des7 not in row_data[3]:
                     continue
+
+                # 검색 필터링
+                # 검색 필터링
+                if des8 and des8 not in row_data[2] and des8 not in row_data[8]:
+                    continue
+
+
                 # 데이터 추가
                 data_list.append(row_data)
 
@@ -290,8 +307,6 @@ def filter_data():
                                             "비고", "주소", "동/호수", "입력시간", "기타사항"])
 
                 FileName = test.replace("uploads\\", '')
-                print("str_options:", available_str_options)
-                print("str_options2:", available_str_options2)
 
                 return render_template("index.html", df=df, FileName=FileName, test=test, filter_conditions={
                     "date1": des1, "date2": des6,

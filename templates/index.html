@@ -97,6 +97,7 @@
         background-color: #999999;
         cursor: pointer;
         height: 30px;
+        margin: 0px;
         margin-left: 10px;
         border-radius: 2px;
         transition: background-color 0.3s;
@@ -171,8 +172,8 @@
     .firstcontainer{
         display: flex;
         flex-direction: row;
-        gap: 1rem;
-        padding: 5px 20px;
+        gap: 0.5rem;
+        padding: 20px 10px;
         border-radius: 5px;
         display: flex;
         flex-direction: row;
@@ -180,7 +181,6 @@
     .headcon{
         display: flex;
         flex-direction: row;
-        width: 300px;
     }
     .buttons{
         width: 80px;
@@ -218,7 +218,7 @@
     }
     input[type="text"] {
         height: 25px;
-        width: 200px;
+        width: 125px;
     }
     .subtext{
         display: flex;
@@ -236,7 +236,7 @@
         font-weight: 700; 
         padding: 20px;
     }
-    @media only screen and (max-width: 1750px) {
+    @media only screen and (max-width: 1915px) {
     .header {
         gap: 1rem;
         border: solid 2px #678CCF;
@@ -259,10 +259,10 @@
         align-items: center;
     }
     .firstcontainer{
-        gap: 5rem;
+        gap: 2rem;
     }
     .grouplist{
-        width: 150px;
+        width: 10px;
     }
 }
 @media only screen and (max-width: 1450px) {
@@ -322,6 +322,10 @@
         margin: 0 auto;
     }
     .grouplist{
+        width: 150px;
+    }
+    input[type="text"] {
+        height: 20px;
         width: 150px;
     }
 }
@@ -398,13 +402,16 @@
                                 </datalist>
                                 
                             </div>
-                            <label for="Search">검색:</label>
-                            <input type="text" id="search" name="search" />
+
                             <div class="cencenter2">
                                 <label for="date1">기간</label>
                                 <input type="date" id="date1" name="date1">
                             <label for="date2">~ </label>
                                 <input type="date" id="date2" name="date2">
+                            </div>
+                            <div class="cencenter2">
+                                <label for="search">검색</label>
+                                <input type="text" id="search" name="search" placeholder="이름, 전화번호"/>
                             </div>
                         </div>
     
