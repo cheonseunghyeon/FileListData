@@ -50,6 +50,17 @@ def extract_unique_prefix_two(worksheet, column_index):
             prefixes.add(prefix)
     sorted_prefixes = sorted(prefixes)
     return sorted_prefixes
+
+def extract_unique_prefix_three(worksheet, column_index):
+    prefixes = set()
+    for row in range(worksheet.nrows):
+        row_data = worksheet.row_values(row)
+        value = row_data[column_index]
+        if "-" not in value:
+            prefixes.add(value)
+    sorted_prefixes = sorted(prefixes)
+    return sorted_prefixes
+
 @app.route("/")
 def index():
     global df
@@ -89,12 +100,16 @@ def filter_data():
                 row_data = worksheet.row_values(row)
                 available_str_options = extract_unique_prefix_once(worksheet, 7)
                 available_str_options2 = extract_unique_prefix_two(worksheet, 7)
+                available_str_options3 = extract_unique_prefix_three(worksheet, 7)
 
                 str_options_html = "\n".join(
                     f'<option value="{option}">{option}</option>' for option in available_str_options
                 )
                 str_options_html2 = "\n".join(
                     f'<option value="{option}">{option}</option>' for option in available_str_options2
+                )
+                str_options_html3 = "\n".join(
+                    f'<option value="{option}">{option}</option>' for option in available_str_options3
                 )
                 # 날짜 필터링
                 date_value = row_data[5]
@@ -133,7 +148,11 @@ def filter_data():
                     continue
                 # 상태 필터링
                 if des5 and des5 not in row_data[7]:
-                    continue
+                    if des5 in ["박찬", "임효", "용준"]:
+                        if not any(row_data[7].startswith(des5 + "-") for des5 in ["박찬", "임효", "용준"]):
+                            continue
+                    else:
+                        continue
                 # 그룹 필터링
                 if des7 and des7 not in row_data[3]:
                     continue
@@ -166,7 +185,7 @@ def filter_data():
                     "time": des2, "group": des3,
                     "installer": des4, "str": des5,
                     "apart": des7
-                }, str_options_html=str_options_html, str_options_html2=str_options_html2)
+                }, str_options_html=str_options_html, str_options_html2=str_options_html2,str_options_html3=str_options_html3)
             else:
                 alert_message = "조건에 맞는 데이터가 없습니다"  # 알림 메시지 설정
                 return render_template("index.html", df=None, alert_message=alert_message)
@@ -191,12 +210,16 @@ def filter_data():
                 row_data = worksheet.row_values(row)
                 available_str_options = extract_unique_prefix_once(worksheet, 7)
                 available_str_options2 = extract_unique_prefix_two(worksheet, 7)
+                available_str_options3 = extract_unique_prefix_three(worksheet, 7)
 
                 str_options_html = "\n".join(
                     f'<option value="{option}">{option}</option>' for option in available_str_options
                 )
                 str_options_html2 = "\n".join(
                     f'<option value="{option}">{option}</option>' for option in available_str_options2
+                )
+                str_options_html3 = "\n".join(
+                    f'<option value="{option}">{option}</option>' for option in available_str_options3
                 )
                 # 날짜 필터링
                 date_value = row_data[5]
@@ -234,8 +257,12 @@ def filter_data():
                 if des4 and des4 not in row_data[7]:
                     continue
                 # 상태 필터링
-                if des5 and des5 not in row_data[7]:
-                    continue
+                if des5:
+                    if des5 in ["박찬", "임효", "용준"] and not any(row_data[7].startswith(des5 + "-") for des5 in ["박찬", "임효", "용준"]):
+                        continue
+                    elif des5 not in row_data[7]:
+                        continue
+
 
                 # 그룹 필터링
                 if des7 and des7 not in row_data[3]:
@@ -271,7 +298,7 @@ def filter_data():
                     "time": des2, "group": des3,
                     "installer": des4, "str": des5,
                     "apart": des7
-                }, str_options_html=str_options_html, str_options_html2=str_options_html2)
+                }, str_options_html=str_options_html, str_options_html2=str_options_html2,str_options_html3=str_options_html3)
             else:
                 alert_message = "조건에 맞는 데이터가 없습니다"  # 알림 메시지 설정
                 return render_template("index.html", df=None, alert_message=alert_message)

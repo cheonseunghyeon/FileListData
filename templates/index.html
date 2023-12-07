@@ -349,8 +349,9 @@
                         <div class="cencenter2">
                             <label for="str">상태</label>
                             <select name="str" id="str">
-                                <option value="">전체</option>
+                                <option value="" selected>전체</option>
                                 {{ str_options_html|safe }}
+                                {{ str_options_html3|safe }}
                             </select>
 
                             <label for="group">소속</label>
@@ -397,6 +398,8 @@
                                 </datalist>
                                 
                             </div>
+                            <label for="Search">검색:</label>
+                            <input type="text" id="search" name="search" />
                             <div class="cencenter2">
                                 <label for="date1">기간</label>
                                 <input type="date" id="date1" name="date1">
